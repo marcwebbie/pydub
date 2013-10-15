@@ -175,10 +175,10 @@ class AudioSegmentTests(unittest.TestCase):
     def test_export_forced_codec(self):
         seg = self.seg1 + self.seg2
 
-        seg.export('tmp.ogg', 'ogg', codec='libvorbis')
-        exported = AudioSegment.from_ogg('tmp.ogg')
-        os.unlink('tmp.ogg')
-        self.assertWithinTolerance(len(exported), len(seg), percentage=0.01)
+        with NamedTemporaryFile('w+b', suffix='.ogg') tmp_ogg_file:
+            seg.export(tmp_ogg_file.name, 'ogg', codec='libvorbis')
+            exported = AudioSegment.from_ogg(tmp_ogg_file.name)
+            self.assertWithinTolerance(len(exported), len(seg), percentage=0.01)
 
     def test_fades(self):
         seg = self.seg1[:10000]
